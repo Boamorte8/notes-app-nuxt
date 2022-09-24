@@ -1,0 +1,26 @@
+const useAuth = () => {
+  const { supabase } = useSupabase();
+  const user = useState("user", () => null);
+
+  supabase.auth.onAuthStateChange((e, session) => {
+    user.value = session?.user || null;
+  });
+
+  const signUp = async ({ email, password, ...metadata }) => {
+    const { user: u, error } = await supabase.auth.signUp(
+      {
+        email,
+        password,
+      },
+      {
+        data: metadata,
+      }
+    );
+    if (error) throw error;
+    return u;
+  };
+
+  return { user, signUp };
+};
+
+export default useAuth;
